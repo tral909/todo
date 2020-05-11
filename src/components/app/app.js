@@ -4,10 +4,13 @@ import AppHeader from '../app-header';
 import SearchPanel from '../search-panel';
 import TodoList from '../todo-list';
 import ItemStatusFilter from '../item-status-filter';
+import ItemAddForm from '../item-add-form';
 
 import './app.css';
 
 export default class App extends Component {
+
+  maxId = 100;
 
   state = {
     todoData: [
@@ -24,10 +27,24 @@ export default class App extends Component {
       //todoData.splice(idx, 1); - нельзя менять стейт напрямую, используем копию через slice
 
       const before = todoData.slice(0, idx);
-      const after = todoData.slice(idx + 1);      
+      const after = todoData.slice(idx + 1);
 
       return {
         todoData: [...before, ...after]
+      }
+    });
+  };
+
+  addItem = (text) => {
+    const newItem = {
+      label: text,
+      important: false,
+      id: this.maxId++
+    };
+
+    this.setState(({ todoData }) => {
+      return {
+        todoData: [...todoData, newItem]
       }
     });
   };
@@ -40,10 +57,12 @@ export default class App extends Component {
           <SearchPanel />
           <ItemStatusFilter />
         </div>
-  
+
         <TodoList
-          todos={ this.state.todoData }
-          onDeleted={ this.deleteItem } />
+          todos={this.state.todoData}
+          onDeleted={this.deleteItem} />
+
+        <ItemAddForm onItemAdded={this.addItem}/>
       </div>
     );
   }
